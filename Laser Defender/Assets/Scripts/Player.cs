@@ -10,10 +10,13 @@ public class Player : MonoBehaviour {
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float padding = 1f;
     [SerializeField] int health = 200;
-    [SerializeField] AudioClip deathSound;
-    [SerializeField] [Range(0, 1)] float deathSoundVolume = 0.75f;
+    [SerializeField] int healthRegen = 5;
+    [SerializeField] AudioClip gameOverSound;
+    [SerializeField] [Range(0, 1)]
+    float gameOverSoundVolume = 0.75f;
     [SerializeField] AudioClip shootSound;
-    [SerializeField] [Range(0, 1)] float shootSoundVolume = 0.25f;
+    [SerializeField] [Range(0, 1)]
+    float shootSoundVolume = 0.25f;
 
     [Header("Projectile")]
     [SerializeField] GameObject laserPrefab;
@@ -27,39 +30,55 @@ public class Player : MonoBehaviour {
     float yMin;
     float yMax;
 
+    float healTimer;
+    int maxHealth;
+    bool healing;
+
     // Use this for initialization
-    void Start () {
+    void Start() {
         SetUpMoveBoundaries();
-	}
- 
+        SetUpHealing();
+    }
+
     // Update is called once per frame
-    void Update () {
+    void Update() {
         Move();
         Fire();
-	}
+        Heal();
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         DamageDealer damageDealer = other.gameObject.GetComponent<DamageDealer>();
-        if (!damageDealer) { return; }
+
+        if (!damageDealer)
+        {
+            return;
+        }
+
         ProcessHit(damageDealer);
     }
 
     private void ProcessHit(DamageDealer damageDealer)
     {
         health -= damageDealer.GetDamage();
+
         damageDealer.Hit();
+
         if (health <= 0)
         {
-            Die();
+            healing = false;
+            PlayerLose();
         }
     }
 
-    private void Die()
+    private void PlayerLose()
     {
         FindObjectOfType<Level>().LoadGameOver();
+
         Destroy(gameObject);
-        AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, deathSoundVolume);   
+
+        AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position, gameOverSoundVolume);
     }
 
     public int GetHealth()
@@ -93,7 +112,6 @@ public class Player : MonoBehaviour {
         }
     }
 
-
     private void Move()
     {
         var deltaX = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
@@ -111,5 +129,30 @@ public class Player : MonoBehaviour {
         xMax = gameCamera.ViewportToWorldPoint(new Vector3(1, 0, 0)).x - padding;
         yMin = gameCamera.ViewportToWorldPoint(new Vector3(0, 0, 0)).y + padding;
         yMax = gameCamera.ViewportToWorldPoint(new Vector3(0, 1, 0)).y - padding;
+    }
+
+    private void SetUpHealing()
+    {
+        healTimer = Time.time;
+        maxHealth = health;
+        healing = true;
+    }
+
+    private void Heal()
+    {
+        if (!healing)
+            return;
+
+        if(Time.time - healTimer > 1.0f )
+        {
+            health += healthRegen;
+
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
+
+            healTimer = Time.time;
+        }
     }
 }
