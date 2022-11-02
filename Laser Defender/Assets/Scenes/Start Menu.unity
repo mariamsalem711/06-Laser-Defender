@@ -224,9 +224,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Game
+  m_text: 'Halloween
 
-    Name'
+    Attack'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2187186d970e63746b7136b12feef617, type: 2}
   m_sharedMaterial: {fileID: 21329053586299194, guid: 2187186d970e63746b7136b12feef617,
@@ -1099,7 +1099,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Game Catch Phrase!
+  m_text: 'Dodge trucks
+
+    Dodge Candy
+
+    Get em with the pumpkin'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 31d70b39b1dd72c4f92f970a9637ec79, type: 2}
   m_sharedMaterial: {fileID: 21590465529446768, guid: 31d70b39b1dd72c4f92f970a9637ec79,
